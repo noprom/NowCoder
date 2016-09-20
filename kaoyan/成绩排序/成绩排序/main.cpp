@@ -2,71 +2,76 @@
 //  main.cpp
 //  成绩排序
 //
-//  Created by noprom on 9/18/16.
+//  Created by noprom on 9/20/16.
 //  Copyright © 2016 tyee.noprom@qq.com. All rights reserved.
 //
 
 #include <iostream>
-#include <algorithm>
-#include <string>
-#define MAX_N 10000
+using namespace std;
 
-typedef struct {
-    std::string name;
+struct Stu {
+    int no;
     int score;
-    int id;
-} Score;
+} list[110];
 
-Score scoreList[MAX_N];
-
-int cmp_asc(const Score &a, const Score &b) {
-    if (a.score < b.score) {
-        return 1;
-    } else if (a.score == b.score) {
-        if (a.id < b.id) {
-            return 1;
-        } else {
-            return 0;
-        }
+int cmp(Stu &a, Stu &b) {
+    if (a.score != b.score) {
+        return a.score < b.score;
     }
-    return 0;
-}
-
-int cmp_desc(const Score &a, const Score &b) {
-    if (a.score > b.score) {
-        return 1;
-    } else if (a.score == b.score) {
-        if (a.id < b.id) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-    return 0;
+    return a.no < b.no;
 }
 
 int main(int argc, const char * argv[]) {
-    int n, type;
-    while (scanf("%d", &n) != EOF) {
-        scanf("%d\n", &type);
-        
-        // cin
+    int n;
+    while (~scanf("%d", &n)) {
         for (int i = 0; i < n; i++) {
-            std::cin >> scoreList[i].name;
-            std::cin >> scoreList[i].score;
-            scoreList[i].id = i;
+            scanf("%d %d", &list[i].no, &list[i].score);
         }
         
-        // sort
-        std::sort(scoreList, scoreList + n, type == 0 ? cmp_desc : cmp_asc);
+        for (int i = 1; i < n; i++) {
+            for (int j = i; j >= 1; j--) {
+                if (list[j].score < list[j-1].score) {
+                    Stu tmp = list[j];
+                    list[j] = list[j-1];
+                    list[j-1] = tmp;
+                } else if (list[j].score == list[j-1].score) {
+                    if (list[j].no < list[j-1].no) {
+                        Stu tmp = list[j];
+                        list[j] = list[j-1];
+                        list[j-1] = tmp;
+                    }
+                }
+            }
+        }
         
-        // out
         for (int i = 0; i < n; i++) {
-            std::cout << scoreList[i].name;
-            std::cout << " ";
-            std::cout << scoreList[i].score;
-            std::cout << std::endl;
+            printf("%d %d\n", list[i].no, list[i].score);
         }
     }
     return 0;
 }
+
+/*
+ 题目描述
+ 
+ 用一维数组存储学号和成绩，然后，按成绩排序输出。
+ 输入描述:
+ 输入第一行包括一个整数N(1<=N<=100)，代表学生的个数。
+ 接下来的N行每行包括两个整数p和q，分别代表每个学生的学号和成绩。
+ 
+ 
+ 输出描述:
+ 按照学生的成绩从小到大进行排序，并将排序后的学生信息打印出来。
+ 如果学生的成绩相同，则按照学号的大小进行从小到大排序。
+ 
+ 输入例子:
+ 3
+ 1 90
+ 2 87
+ 3 92
+ 
+ 输出例子:
+ 2 87
+ 1 90
+ 3 92
+*/
